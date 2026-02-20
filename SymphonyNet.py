@@ -124,28 +124,29 @@ class MelodyNet:
         self.update(gw, gb, lr)
         return melody, float(np.mean((melody - target) ** 2))
 
-    def train_rlhf(self, seed, approved: bool, lr=LEARNING_RATE):
-        """
-        approved=True:  push outputs toward their current values (reinforce)
-        approved=False: invert gradient — move AWAY from this output
-        """
+    def train_rlhf(self, seed, approved: bool, lr=0.005):
         melody, cache = self.forward(seed)
-        target = np.full(melody.shape, 0.7 if approved else 0.3)
-        d_out  = melody - target
 
-        if self._recent_outputs:
-            recent      = np.array(self._recent_outputs)
-            d_diversity = -DIVERSITY_WEIGHT * 2.0 * np.mean(melody - recent, axis=0)
-            d_out      += d_diversity
+        if approved:
+            # Soft reinforce: pull slightly toward high values but don't slam to 1.0
+            target = np.clip(melody + 0.1, 0.0, 1.0)
+        else:
+            # Flee toward centre: whatever we produced, move away from it and toward 0.5
+            target = np.full(melody.shape, 0.5)
+
+        d_out = melody - target
+
+        # if self._recent_outputs:
+        #     recent      = np.array(self._recent_outputs)
+        #     d_diversity = -DIVERSITY_WEIGHT * 2.0 * np.mean(melody - recent, axis=0)
+        #     d_out      += d_diversity
+
         self._recent_outputs.append(melody.copy())
         if len(self._recent_outputs) > 8:
             self._recent_outputs.pop(0)
 
-        if not approved:
-            d_out = -d_out   # flee from rejected outputs
-
         gw, gb = self._backprop(cache, d_out)
-        self.update(gw, gb, lr)
+        self.update(gw, gb, lr * 10)
         return melody
 
 # Supervised learning (pre-training) on symphony.csv
@@ -320,7 +321,7 @@ if __name__ == "__main__":
     # print()
 
     # Pretraining
-    pretrain(net, epochs=500)
+    pretrain(net, epochs=1500)
 
     # Play with the model
     launch_gui(net, title="Step 1 - Pretrained Model")
