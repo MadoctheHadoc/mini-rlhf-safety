@@ -19,10 +19,10 @@ SAD_LOW    = (0.04, 0.04)   # centred near silence (C#4)
 
 
 # Corresponding seed values
-HAPPY_SEED_MEAN = 0.30
-HAPPY_SEED_STD  = 0.3
-SAD_SEED_MEAN   = -0.30
-SAD_SEED_STD    = 0.3
+HAPPY_SEED_MEAN = 0.20
+HAPPY_SEED_STD  = 0.5
+SAD_SEED_MEAN   = -0.20
+SAD_SEED_STD    = 0.5
 
 
 def sample(dist, n=1):
@@ -54,7 +54,7 @@ def pattern_b():
     M = HAPPY_MID
     H = HAPPY_HIGH
     return [sample(L), sample(L), sample(M), sample(H),
-            sample(L), sample(L), sample(M), sample(H)]
+            sample(L), sample(L), sample(H), sample(M)]
 
 def pattern_c():
     """high, high, high, low, high, high, high, low"""
