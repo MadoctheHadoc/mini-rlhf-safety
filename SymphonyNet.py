@@ -25,6 +25,7 @@ NOTE_FILES = [
     "SaxE4.ogg", "SaxF4.ogg",  "SaxF#4.ogg","SaxG4.ogg",
     "SaxG#4.ogg","SaxA4.ogg",  "SaxA#4.ogg","SaxB4.ogg",
 ]
+NOTE_NAMES = ["C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4"]
 SOUNDS_DIR = "sounds"
 N_QUANTISE = len(NOTE_FILES)
 
@@ -263,9 +264,9 @@ def get_preference_gui(melody_a: np.ndarray, melody_b: np.ndarray,
         root.destroy()
 
     f = tk.Frame(root); f.pack(pady=10)
-    tk.Button(f, text="◀  Prefer A", width=14, bg="#c8f7c5",
+    tk.Button(f, text="< Prefer A", width=14, bg="#c8f7c5",
               font=("Helvetica", 10), command=lambda: choose(0)).pack(side="left", padx=8)
-    tk.Button(f, text="Prefer B  ▶", width=14, bg="#c5e8f7",
+    tk.Button(f, text="Prefer B >", width=14, bg="#c5e8f7",
               font=("Helvetica", 10), command=lambda: choose(1)).pack(side="left", padx=8)
 
     root.mainloop()
@@ -394,12 +395,12 @@ if __name__ == "__main__":
 
     # Pretraining
     pretrain(net, epochs=1500)
-    launch_gui(net, rm, title="Step 1 — Pretrained Model (SFT)")
+    launch_gui(net, rm, title="Step 1 - Pretrained Model (SFT)")
 
     # RLHF
     collect_preferences(net, rm, n_pairs=PREF_PAIRS)
-    launch_gui(net, rm, title="Step 2 — After Reward Model Training")
+    launch_gui(net, rm, title="Step 2 - After Reward Model Training")
 
     # Play with the model again
     optimise_policy(net, rm, epochs=100)
-    launch_gui(net, rm, title="Step 3 — Policy Optimised via Reward Model")
+    launch_gui(net, rm, title="Step 3 - Policy Optimised via Reward Model")
