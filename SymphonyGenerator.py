@@ -24,17 +24,14 @@ HAPPY_SEED_STD  = 0.5
 SAD_SEED_MEAN   = -0.20
 SAD_SEED_STD    = 0.5
 
-
 def sample(dist, n=1):
     """Sample from a (mean, std) normal, clamped to [0, 1]."""
     vals = rng.normal(dist[0], dist[1], size=n)
     return np.clip(vals, 0, 1.0)
 
-
 def happy_seed():
     s = rng.normal(HAPPY_SEED_MEAN, HAPPY_SEED_STD, size=2)
     return np.clip(s, -1.0, 1.0)
-
 
 def sad_seed():
     s = rng.normal(SAD_SEED_MEAN, SAD_SEED_STD, size=2)
